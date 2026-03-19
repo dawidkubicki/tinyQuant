@@ -1,9 +1,0 @@
-ib_insync
-pandas
-twelvedata
-python-dotenv
-pydantic
-pydantic-settings
-tenacity
-pyarrow
-pytest

@@ -1,2 +1,0 @@
-"""tinyQuant data foundation package."""
-
