@@ -1,0 +1,107 @@
+# Market-neutral H4 perpetual strategy — single source of truth for parameters.
+# Secrets (API keys) live in .env — see .env.example
+
+runtime:
+  timezone: "UTC"
+  cycle_interval: "4h"
+  max_retries: 5
+  retry_backoff_seconds: 2.0
+
+exchange:
+  id: "binance"
+  default_type: "swap"
+  sandbox: false
+  enable_rate_limit: true
+
+universe:
+  top_n: 50
+  quote_asset: "USDT"
+  min_quote_volume_usd_24h: 5_000_000
+  blacklist: []
+  benchmark_symbol: "BTC/USDT:USDT"
+
+data:
+  ohlcv_timeframe: "4h"
+  ohlcv_lookback_bars: 500
+  funding_lookback_hours: 720
+  max_missing_bars_ratio: 0.05
+
+beta_neutralization:
+  lookback_bars: 120
+  method: "ols"
+  winsorize_std: 4.0
+
+graph_signal:
+  correlation_lookback_bars: 120
+  edge_threshold: 0.25
+  diffusion_steps: 3
+  diffusion_alpha: 0.3
+  score_clip: 3.0
+
+tda:
+  correlation_lookback_bars: 120
+  max_dimension: 1
+  max_edge_length: 1.5
+  landscape_resolution: 100
+  landscape_min: 0.0
+  landscape_max: 1.0
+
+regime:
+  gmm:
+    n_components: 3
+    covariance_type: "full"
+    random_state: 42
+    model_path: "./data/models/gmm_regime.joblib"
+  xgboost:
+    model_path: "./data/models/xgb_regime.json"
+    n_estimators: 100
+    max_depth: 4
+    learning_rate: 0.1
+    subsample: 0.9
+    colsample_bytree: 0.9
+    random_state: 42
+  min_regime_confidence: 0.55
+
+rd_gat:
+  hidden_dim: 32
+  num_heads: 4
+  dropout: 0.1
+  checkpoint_dir: "./data/models/rd_gat"
+  score_temperature: 1.0
+  fallback_blend:
+    diffusion_weight: 0.45
+    funding_weight: 0.35
+    sentiment_weight: 0.20
+
+portfolio:
+  num_long: 5
+  num_short: 5
+  target_gross_exposure: 1.0
+  max_net_exposure: 0.05
+  max_leverage: 3.0
+  volatility_lookback_bars: 60
+  min_notional_usd: 20.0
+
+execution:
+  paper: true
+  order_type: "market"
+  slippage_bps_cap: 50
+  reduce_only_on_close: true
+  partial_fill_timeout_seconds: 30
+  fee_bps_taker: 5.0
+
+risk:
+  daily_portfolio_loss_limit_pct: 3.0
+  close_all_on_breach: true
+  cooldown_hours_after_breach: 24
+  state_path: "./data/risk_state.json"
+
+observability:
+  log_level: "INFO"
+  audit_dir: "./data/audit"
+  metrics_enabled: true
+  alert_webhook_url: null
+
+sentiment:
+  enabled: false
+  placeholder_value: 0.0

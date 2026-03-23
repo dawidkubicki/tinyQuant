@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tinyquant"
+version = "0.1.0"
+description = "H4 market-neutral crypto perpetual futures research & execution engine"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "ccxt>=4.2.0",
+  "numpy>=1.26.0",
+  "pandas>=2.1.0",
+  "scipy>=1.11.0",
+  "scikit-learn>=1.4.0",
+  "xgboost>=2.0.0",
+  "ripser>=0.6.0",
+  "PyYAML>=6.0.1",
+  "pydantic>=2.5.0",
+  "pydantic-settings>=2.1.0",
+  "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+torch = ["torch>=2.1.0"]
+dev = [
+  "pytest>=7.4.0",
+  "pytest-asyncio>=0.23.0",
+  "ruff>=0.2.0",
+]
+
+[project.scripts]
+tinyquant-h4 = "tinyquant.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
