@@ -105,3 +105,24 @@ observability:
 sentiment:
   enabled: false
   placeholder_value: 0.0
+  news:
+    sqlite_path: "./data/news_sentiment.db"
+    ollama_host: "http://127.0.0.1:11434"
+    ollama_model: "llama3"
+    ollama_timeout_seconds: 120.0
+    ollama_max_retries: 2
+    limit_per_feed: 5
+    max_body_chars: 1200
+    fetch_ld_json: false
+    rss_timeout_seconds: 20.0
+    poll_interval_seconds: 900.0
+    decay_window_hours: 24.0
+    decay_base: 0.9
+    macro_blend_into_tokens: 0.35
+    append_macro_to_regime_features: false
+    user_agent: "tinyQuant-news/0.1 (+https://github.com/) research"
+    feeds:
+      - name: "coindesk"
+        url: "https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml"
+      - name: "cryptoslate"
+        url: "https://cryptoslate.com/feed/"

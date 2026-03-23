@@ -73,6 +73,24 @@ Zobacz [Szkolenie i artefakty](szkolenie-i-artyfakty.md) — to **nie** jest tre
 pytest -q
 ```
 
+## Newsy i Ollama (opcjonalnie)
+
+1. Uruchom lokalnie [Ollama](https://ollama.com) i pobierz model zgodny z `sentiment.news.ollama_model` w YAML (np. `ollama pull llama3`).
+2. W strategii ustaw `sentiment.enabled: true` oraz ścieżkę `sentiment.news.sqlite_path` (domyślnie `./data/news_sentiment.db`).
+3. Jednorazowy zrzut RSS + klasyfikacja:
+
+```bash
+tinyquant-h4 --config config/strategy.market_neutral.h4.yaml news-sync
+```
+
+4. Pętla w tle (np. co 15 min — `poll_interval_seconds: 900`):
+
+```bash
+tinyquant-h4 --config config/strategy.market_neutral.h4.yaml news-loop
+```
+
+Cykl `run-once` **nie** woła Ollamy — tylko czyta zagregowany sentyment z SQLite. Host API możesz nadpisać zmienną `OLLAMA_HOST` (standard biblioteki `ollama`); adres w YAML (`ollama_host`) jest przekazywany explicite z konfiguracji.
+
 ## Harmonogram co 4 godziny
 
 Obecnie repo nie uruchamia demona — cykl wywołujesz **ręcznie** lub z **cron** / **systemd timer** / schedulera w chmurze, np.:

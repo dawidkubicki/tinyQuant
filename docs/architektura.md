@@ -64,7 +64,7 @@ Import **xgboost** jest **leniwy** (ładowany dopiero przy treningu/ładowaniu m
 - Jeśli w `rd_gat.checkpoint_dir` istnieje plik `regime_{k}.npz` z wagami (`W`, `a_src`, `a_dst`, opcjonalnie `W_out`), używany jest uproszczony mechanizm attention na grafie.
 - W przeciwnym razie działa **fallback**: standaryzacja cech (diffusion, funding, placeholder sentymentu) i blend wag z `rd_gat.fallback_blend`, następnie `tanh` → score w \([-1, 1]\).
 
-**Sentyment:** na razie stały placeholder (`sentiment.*` w YAML); pole pod przyszłe newsy / social.
+**Sentyment:** przy `sentiment.enabled: true` wektor per alt jest budowany z tabeli SQLite (`sentiment.news.sqlite_path`): wpisy `MICRO` mapują tickery na symbole CCXT (np. `SOL` → `SOL/USDT:USDT`), `MACRO` daje składową globalną (średnia z decay) i jest mieszana do każdego tokenu wg `macro_blend_into_tokens`; `NOISE` jest pomijane. Decay: `sentiment_score * (decay_base ** godzin_od_publikacji)`. Worker `tinyquant-h4 news-sync` / `news-loop` zapełnia bazę (RSS → Ollama JSON). Opcjonalnie `append_macro_to_regime_features` dokleja makro do wektora cech reżimu (zmiana wymiaru — ponowny trening XGBoost).
 
 ## 7. Portfel market-neutral
 

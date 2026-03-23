@@ -31,6 +31,9 @@ tinyquant-h4 --config config/strategy.market_neutral.h4.yaml run-once
 
 # Bootstrap regime models (synthetic features — replace with your historical pipeline)
 tinyquant-h4 --config config/strategy.market_neutral.h4.yaml train-regime
+
+# News: RSS → Ollama (JSON) → SQLite (requires local Ollama + model, e.g. llama3)
+tinyquant-h4 --config config/strategy.market_neutral.h4.yaml news-sync
 ```
 
 On **macOS**, if `train-regime` fails to load XGBoost (`libomp.dylib`), install OpenMP: `brew install libomp`.
@@ -41,7 +44,8 @@ On **macOS**, if `train-regime` fails to load XGBoost (`libomp.dylib`), install 
 |------|------|
 | `src/tinyquant/data/` | CCXT OHLCV + funding, universe selection |
 | `src/tinyquant/features/` | Returns, beta-neutral epsilon |
-| `src/tinyquant/signals/` | Graph diffusion, TDA landscape, sentiment placeholder |
+| `src/tinyquant/signals/` | Graph diffusion, TDA landscape, sentiment from news DB |
+| `src/tinyquant/news/` | RSS ingest, Ollama classifier, SQLite store, decay aggregation |
 | `src/tinyquant/regime/` | GMM (offline) + XGBoost (online) |
 | `src/tinyquant/model/` | RD-GAT checkpoint inference + fallback blend |
 | `src/tinyquant/portfolio/` | Vol parity sizing, constraints, rebalance deltas |

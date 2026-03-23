@@ -74,6 +74,7 @@ def build_regime_feature_row(
     landscape: np.ndarray,
     bench_returns_window: np.ndarray,
     volume_window: np.ndarray | None = None,
+    extra_scalars: np.ndarray | None = None,
 ) -> np.ndarray:
     btc_vol = float(np.std(bench_returns_window[np.isfinite(bench_returns_window)]))
     parts = [landscape, np.array([btc_vol], dtype=np.float64)]
@@ -83,6 +84,8 @@ def build_regime_feature_row(
         parts.append(np.array([float(np.mean(vm)), float(np.std(vm))], dtype=np.float64))
     else:
         parts.append(np.array([0.0, 0.0], dtype=np.float64))
+    if extra_scalars is not None and extra_scalars.size:
+        parts.append(np.asarray(extra_scalars, dtype=np.float64).ravel())
     return np.concatenate(parts)
 
 
@@ -93,6 +96,8 @@ def regime_feature_row_from_panel(
     symbols: list[str],
     bench_sym: str,
     cfg: StrategyConfig,
+    macro_sentiment: float | None = None,
+    append_macro_to_regime: bool = False,
 ) -> np.ndarray:
     """
     Regime feature vector for the last bar, matching run_h4_cycle (TDA window, bench vol, volume stats).
@@ -132,7 +137,10 @@ def regime_feature_row_from_panel(
         volume_window = None
     else:
         volume_window = vol_full[-tl:, bench_idx].astype(np.float64)
-    return build_regime_feature_row(land, bench_r, volume_window=volume_window)
+    extra: np.ndarray | None = None
+    if append_macro_to_regime and macro_sentiment is not None:
+        extra = np.array([float(macro_sentiment)], dtype=np.float64)
+    return build_regime_feature_row(land, bench_r, volume_window=volume_window, extra_scalars=extra)
 
 
 def run_h4_cycle(
@@ -200,12 +208,20 @@ def run_h4_cycle(
         score_clip=cfg.graph_signal.score_clip,
     )
 
+    sent, sentiment_debug = sentiment_vector(sym_t, cfg.sentiment)
+    macro_agg = float(sentiment_debug.get("macro_aggregate", 0.0)) if cfg.sentiment.enabled else 0.0
+    append_macro = bool(
+        cfg.sentiment.enabled and cfg.sentiment.news.append_macro_to_regime_features
+    )
+
     feat_row = regime_feature_row_from_panel(
         close,
         vol_full=panel_vol,
         symbols=symbols,
         bench_sym=bench_sym,
         cfg=cfg,
+        macro_sentiment=macro_agg,
+        append_macro_to_regime=append_macro,
     )
 
     n_regimes = cfg.regime.gmm.n_components
@@ -240,8 +256,6 @@ def run_h4_cycle(
                     funding_vec[j] = float(fr["fundingRate"].iloc[-1])
         except Exception as e:
             logger.warning("Funding fetch degraded: %s", e)
-
-    sent = sentiment_vector(len(sym_t), cfg.sentiment)
 
     n_t = len(sym_t)
     c = np.corrcoef(eps_t[-gl:].T) if gl >= 5 else np.eye(n_t)
@@ -319,6 +333,10 @@ def run_h4_cycle(
         "fills": fills + close_fills,
         "risk_daily_breach": breached,
         "synthetic": synthetic,
+        "sentiment": {
+            "per_tradable": {sym_t[i]: float(sent[i]) for i in range(len(sym_t))},
+            "debug": sentiment_debug,
+        },
     }
     audit_path = audit_dir / f"h4_cycle_{ts}.json"
     audit_path.write_text(json.dumps(audit, default=str, indent=2), encoding="utf-8")

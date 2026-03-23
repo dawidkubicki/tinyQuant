@@ -13,6 +13,7 @@ import numpy as np
 
 from tinyquant.config.loaders import load_strategy_config
 from tinyquant.model.rd_gat_train import train_rd_gat_export_npz
+from tinyquant.news.worker import run_news_loop, sync_news_once
 from tinyquant.orchestration.h4_cycle import run_h4_cycle
 from tinyquant.orchestration.scheduler import seconds_until_next_bar_close
 from tinyquant.regime.gmm_offline import fit_and_save_gmm
@@ -116,6 +117,34 @@ def cmd_train_regime_history(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_news_sync(args: argparse.Namespace) -> int:
+    cfg = load_strategy_config(args.config)
+    _setup_logging(cfg.observability.log_level)
+    log = logging.getLogger(__name__)
+    stats = sync_news_once(cfg.sentiment.news)
+    log.info(
+        "News sync: feeds=%s seen=%s classified=%s skipped_existing=%s failed=%s",
+        stats.feeds_processed,
+        stats.items_seen,
+        stats.items_classified,
+        stats.items_skipped_existing,
+        stats.items_failed,
+    )
+    return 0
+
+
+def cmd_news_loop(args: argparse.Namespace) -> int:
+    cfg = load_strategy_config(args.config)
+    _setup_logging(cfg.observability.log_level)
+    log = logging.getLogger(__name__)
+    log.info("Starting news loop (poll_interval=%ss)", cfg.sentiment.news.poll_interval_seconds)
+    try:
+        run_news_loop(cfg.sentiment.news)
+    except KeyboardInterrupt:
+        log.info("News loop stopped")
+    return 0
+
+
 def cmd_train_rd_gat(args: argparse.Namespace) -> int:
     cfg = load_strategy_config(args.config)
     _setup_logging(cfg.observability.log_level)
@@ -204,6 +233,18 @@ def main(argv: list[str] | None = None) -> int:
     tg.add_argument("--lr", type=float, default=0.05)
     tg.add_argument("--seed", type=int, default=42)
     tg.set_defaults(func=cmd_train_rd_gat)
+
+    ns = sub.add_parser(
+        "news-sync",
+        help="Fetch RSS headlines, classify with Ollama, store JSON in SQLite (one shot)",
+    )
+    ns.set_defaults(func=cmd_news_sync)
+
+    nl = sub.add_parser(
+        "news-loop",
+        help="Run news-sync on poll_interval_seconds (default 900s) until interrupted",
+    )
+    nl.set_defaults(func=cmd_news_loop)
 
     args = p.parse_args(argv)
     return int(args.func(args))

@@ -146,9 +146,49 @@ class ObservabilityConfig(BaseModel):
     alert_webhook_url: str | None = None
 
 
+class SentimentNewsFeedItem(BaseModel):
+    name: str = Field(min_length=1)
+    url: str = Field(min_length=8)
+
+
+def _default_sentiment_news_feeds() -> list[SentimentNewsFeedItem]:
+    return [
+        SentimentNewsFeedItem(
+            name="coindesk",
+            url="https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml",
+        ),
+        SentimentNewsFeedItem(name="cryptoslate", url="https://cryptoslate.com/feed/"),
+    ]
+
+
+class SentimentNewsConfig(BaseModel):
+    """RSS + Ollama + SQLite pipeline (see `tinyquant.news.worker`)."""
+
+    sqlite_path: str = "./data/news_sentiment.db"
+    ollama_host: str = "http://127.0.0.1:11434"
+    ollama_model: str = "llama3"
+    ollama_timeout_seconds: float = Field(gt=0, default=120.0)
+    ollama_max_retries: int = Field(ge=0, default=2)
+
+    feeds: list[SentimentNewsFeedItem] = Field(default_factory=_default_sentiment_news_feeds)
+    limit_per_feed: int = Field(ge=1, le=100, default=5)
+    max_body_chars: int = Field(ge=0, le=100_000, default=1200)
+    fetch_ld_json: bool = False
+    rss_timeout_seconds: float = Field(gt=0, default=20.0)
+    poll_interval_seconds: float = Field(ge=30.0, default=900.0)
+
+    decay_window_hours: float = Field(gt=0, default=24.0)
+    decay_base: float = Field(gt=0.0, le=1.0, default=0.9)
+    macro_blend_into_tokens: float = Field(ge=0.0, le=1.0, default=0.35)
+
+    append_macro_to_regime_features: bool = False
+    user_agent: str = "tinyQuant-news/0.1 (+https://github.com/) research"
+
+
 class SentimentConfig(BaseModel):
     enabled: bool = False
     placeholder_value: float = Field(ge=-1.0, le=1.0, default=0.0)
+    news: SentimentNewsConfig = Field(default_factory=SentimentNewsConfig)
 
 
 class StrategyConfig(BaseModel):

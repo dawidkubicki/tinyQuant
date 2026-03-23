@@ -94,7 +94,11 @@ Dzienny limit straty w %, `close_all_on_breach`, czas cooldownu, ścieżka `stat
 
 ### `sentiment`
 
-`enabled`, `placeholder_value` — do czasu podłączenia prawdziwego feedu.
+| Pole | Znaczenie |
+|------|-----------|
+| `enabled` | Jeśli `true`, wektor sentymentu dla RD-GAT jest liczony z bazy SQLite (`sentiment.news.sqlite_path`) z oknem i decay z YAML. |
+| `placeholder_value` | Wartość gdy `enabled: false` lub błąd odczytu. |
+| `news.*` | Pipeline RSS + Ollama: `feeds`, `ollama_host`, `ollama_model`, `sqlite_path`, `decay_window_hours`, `decay_base` (\(0.9^{h}\)), `macro_blend_into_tokens` (jak mocno makro wpływa na każdy token), `poll_interval_seconds` (worker `news-loop`), `append_macro_to_regime_features` (dokleja 1 wymiar do wektora cech reżimu — **wymaga ponownego treningu XGBoost**). |
 
 ## Schema Pydantic
 
