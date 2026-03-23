@@ -1,0 +1,18 @@
+[Unit]
+Description=tinyQuant H4 run-loop (sleep to 4h UTC, execute cycle)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tinyquant
+WorkingDirectory=/opt/tinyQuant
+Environment=PYTHONUNBUFFERED=1
+# Load API keys from an environment file (chmod 600)
+EnvironmentFile=-/etc/tinyquant/h4.env
+ExecStart=/opt/tinyQuant/.venv/bin/tinyquant-h4 --config /opt/tinyQuant/config/strategy.market_neutral.h4.yaml run-loop --post-boundary-seconds 15 --max-consecutive-errors 5
+Restart=on-failure
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

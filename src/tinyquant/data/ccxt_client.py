@@ -95,19 +95,28 @@ class CCXTDataClient:
         return pd.DataFrame(rows, columns=["ts", "fundingRate"])
 
     @staticmethod
-    def close_prices_matrix(
+    def aligned_column_matrix(
         dfs: dict[str, pd.DataFrame],
         symbols: list[str],
+        column: str,
     ) -> tuple[np.ndarray, list[pd.Timestamp]]:
-        """Align close prices on intersection of timestamps; returns (T, N) and index."""
+        """Align one OHLCV column per symbol on intersection of timestamps; (T, N) and index."""
         if not symbols:
             return np.zeros((0, 0)), []
         series_list = []
         for s in symbols:
-            df = dfs[s].set_index("ts")["close"].sort_index()
+            df = dfs[s].set_index("ts")[column].sort_index()
             series_list.append(df.rename(s))
         joined = pd.concat(series_list, axis=1, join="inner").sort_index()
         joined = joined.dropna(how="any")
         if joined.empty:
             return np.zeros((0, len(symbols))), []
         return joined.to_numpy(dtype=np.float64), list(joined.index)
+
+    @staticmethod
+    def close_prices_matrix(
+        dfs: dict[str, pd.DataFrame],
+        symbols: list[str],
+    ) -> tuple[np.ndarray, list[pd.Timestamp]]:
+        """Align close prices on intersection of timestamps; returns (T, N) and index."""
+        return CCXTDataClient.aligned_column_matrix(dfs, symbols, "close")

@@ -1,0 +1,12 @@
+[Unit]
+Description=tinyQuant train-regime-history (GMM + XGBoost from OHLCV)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=tinyquant
+WorkingDirectory=/opt/tinyQuant
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=-/etc/tinyquant/h4.env
+ExecStart=/opt/tinyQuant/.venv/bin/tinyquant-h4 --config /opt/tinyQuant/config/strategy.market_neutral.h4.yaml train-regime-history --lookback 2000 --step 4

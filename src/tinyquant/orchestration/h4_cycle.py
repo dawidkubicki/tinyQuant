@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 import logging
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -16,7 +15,6 @@ from tinyquant.data.ccxt_client import CCXTDataClient
 from tinyquant.data.universe import select_universe_symbols
 from tinyquant.execution.perp_executor import PaperPerpExecutor
 from tinyquant.features.beta_neutral import epsilon_matrix
-from tinyquant.features.returns import log_returns_from_close
 from tinyquant.model.rd_gat import infer_token_scores
 from tinyquant.portfolio.constraints import enforce_gross_net_limits
 from tinyquant.portfolio.rebalance import diff_orders
@@ -47,9 +45,11 @@ def _fetch_ohlcv_panel(
     client: CCXTDataClient,
     symbols: list[str],
     cfg: StrategyConfig,
+    *,
+    lookback_bars: int | None = None,
 ) -> tuple[dict[str, pd.DataFrame], list[str]]:
     tf = cfg.data.ohlcv_timeframe
-    limit = cfg.data.ohlcv_lookback_bars
+    limit = lookback_bars if lookback_bars is not None else cfg.data.ohlcv_lookback_bars
     dfs: dict[str, pd.DataFrame] = {}
     valid: list[str] = []
     for sym in symbols:
@@ -86,6 +86,55 @@ def build_regime_feature_row(
     return np.concatenate(parts)
 
 
+def regime_feature_row_from_panel(
+    close: np.ndarray,
+    *,
+    vol_full: np.ndarray | None,
+    symbols: list[str],
+    bench_sym: str,
+    cfg: StrategyConfig,
+) -> np.ndarray:
+    """
+    Regime feature vector for the last bar, matching run_h4_cycle (TDA window, bench vol, volume stats).
+    vol_full may be None (volume slots zeroed); otherwise must match close shape.
+    """
+    if close.shape[0] < cfg.beta_neutralization.lookback_bars + 10:
+        raise RuntimeError("Insufficient history for regime features")
+    if vol_full is not None and vol_full.shape != close.shape:
+        raise ValueError("vol_full must match close shape")
+
+    bench_idx = symbols.index(bench_sym)
+    rets = np.diff(np.log(np.clip(close, 1e-12, None)), axis=0)
+    eps, _, _ = epsilon_matrix(
+        rets,
+        bench_col=bench_idx,
+        winsorize_std=cfg.beta_neutralization.winsorize_std,
+    )
+    trad_idx = _tradable_mask(symbols, bench_sym)
+    eps_t = eps[:, trad_idx]
+
+    tl = min(cfg.tda.correlation_lookback_bars, eps_t.shape[0])
+    sub = eps_t[-tl:]
+    corr = np.corrcoef(sub.T)
+    corr = np.nan_to_num(corr, nan=0.0)
+    np.fill_diagonal(corr, 1.0)
+    dist = correlation_distance_matrix(corr)
+    land = persistence_landscape_vector(
+        dist,
+        max_dimension=cfg.tda.max_dimension,
+        max_edge_length=cfg.tda.max_edge_length,
+        resolution=cfg.tda.landscape_resolution,
+        t_min=cfg.tda.landscape_min,
+        t_max=cfg.tda.landscape_max,
+    )
+    bench_r = rets[-tl:, bench_idx]
+    if vol_full is None:
+        volume_window = None
+    else:
+        volume_window = vol_full[-tl:, bench_idx].astype(np.float64)
+    return build_regime_feature_row(land, bench_r, volume_window=volume_window)
+
+
 def run_h4_cycle(
     cfg: StrategyConfig,
     *,
@@ -108,6 +157,7 @@ def run_h4_cycle(
     bench_sym = cfg.universe.benchmark_symbol
 
     client: CCXTDataClient | None = None
+    panel_vol: np.ndarray | None = None
     if synthetic:
         symbols, close = _synthetic_universe()
         bench_idx = 0
@@ -121,9 +171,13 @@ def run_h4_cycle(
         if bench_sym not in symbols:
             raise RuntimeError(f"Benchmark {bench_sym} missing after fetch")
         close, _ts = CCXTDataClient.close_prices_matrix(dfs, symbols)
+        vol_full, _vts = CCXTDataClient.aligned_column_matrix(dfs, symbols, "volume")
+        if close.shape != vol_full.shape:
+            raise RuntimeError("Aligned close/volume shape mismatch")
         if close.shape[0] < cfg.beta_neutralization.lookback_bars + 10:
             raise RuntimeError("Insufficient aligned history")
         bench_idx = symbols.index(bench_sym)
+        panel_vol = vol_full
 
     t, n = close.shape
     rets = np.diff(np.log(np.clip(close, 1e-12, None)), axis=0)
@@ -146,23 +200,13 @@ def run_h4_cycle(
         score_clip=cfg.graph_signal.score_clip,
     )
 
-    tl = min(cfg.tda.correlation_lookback_bars, eps_t.shape[0])
-    sub = eps_t[-tl:]
-    corr = np.corrcoef(sub.T)
-    corr = np.nan_to_num(corr, nan=0.0)
-    np.fill_diagonal(corr, 1.0)
-    dist = correlation_distance_matrix(corr)
-    land = persistence_landscape_vector(
-        dist,
-        max_dimension=cfg.tda.max_dimension,
-        max_edge_length=cfg.tda.max_edge_length,
-        resolution=cfg.tda.landscape_resolution,
-        t_min=cfg.tda.landscape_min,
-        t_max=cfg.tda.landscape_max,
+    feat_row = regime_feature_row_from_panel(
+        close,
+        vol_full=panel_vol,
+        symbols=symbols,
+        bench_sym=bench_sym,
+        cfg=cfg,
     )
-
-    bench_r = rets[-tl:, bench_idx]
-    feat_row = build_regime_feature_row(land, bench_r, volume_window=None)
 
     n_regimes = cfg.regime.gmm.n_components
     xgb_model = load_xgb(cfg.regime.xgboost)

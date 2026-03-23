@@ -1,0 +1,12 @@
+# Example crontab snippets (UTC). Adjust paths and config.
+SHELL=/bin/bash
+PATH=/usr/local/bin:/usr/bin
+
+# H4 decision loop: long-running process (prefer systemd unit with Restart=always instead).
+# @reboot cd /path/to/tinyQuant && .venv/bin/tinyquant-h4 --config config/strategy.market_neutral.h4.yaml run-loop >> /var/log/tinyquant-h4.log 2>&1
+
+# Weekly regime retrain (Sunday 02:15 UTC)
+15 2 * * 0 cd /path/to/tinyQuant && .venv/bin/tinyquant-h4 --config config/strategy.market_neutral.h4.yaml train-regime-history --lookback 2000 --step 4 >> /var/log/tinyquant-retrain.log 2>&1
+
+# Optional: RD-GAT after you build training packs offline
+# 30 3 * * 0 cd /path/to/tinyQuant && .venv/bin/tinyquant-h4 --config config/strategy.market_neutral.h4.yaml train-rd-gat --data ./data/training/regime_0.npz --regime 0 >> /var/log/tinyquant-rdgat.log 2>&1
