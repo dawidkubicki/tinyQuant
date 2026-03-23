@@ -37,7 +37,7 @@ def _synthetic_universe(n: int = 16, t: int = 320, seed: int = 42) -> tuple[list
     rng = np.random.default_rng(seed)
     rets = rng.normal(0, 0.015, size=(t, n))
     close = 100.0 * np.cumprod(1.0 + rets, axis=0)
-    symbols = ["BTC/USDT:USDT"] + [f"ALT{i}/USDT:USDT" for i in range(1, n)]
+    symbols = ["BTC/USD:USD"] + [f"ALT{i}/USD:USD" for i in range(1, n)]
     return symbols, close.astype(np.float64)
 
 

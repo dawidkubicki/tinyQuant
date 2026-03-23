@@ -26,8 +26,8 @@ Jest to **jedyny kontrakt parametrów** ładowany przez `load_strategy_config()`
 
 | Pole | Uzupełnij |
 |------|-----------|
-| `id` | Id CCXT, np. `binance` |
-| `default_type` | `swap` dla perpetual USDT-M |
+| `id` | Wyłącznie **`krakenfutures`** (klasa CCXT dla Kraken Futures / perpetuali). Spot `kraken` nie jest używany. |
+| `default_type` | `swap` dla perpetuali (linear w CCXT) |
 | `sandbox` | `true` tylko jeśli giełda i klucze to sandbox |
 | `enable_rate_limit` | Zwykle `true` |
 
@@ -38,9 +38,10 @@ Jest to **jedyny kontrakt parametrów** ładowany przez `load_strategy_config()`
 | Pole | Uzupełnij |
 |------|-----------|
 | `top_n` | Liczba instrumentów (np. 50) |
-| `min_quote_volume_usd_24h` | Próg odfiltrowania illikwidów |
+| `quote_asset` | Dla Kraken Futures w CCXT linear perpy mają **`USD`** w symbolu (`BASE/USD:USD`). **USDT jest zabroniony** w schemacie. Na koncie Kraken typowo zasilasz margines **USDC** (1:1 z USD w rozliczeniach), ale string CCXT pozostaje `USD`. |
+| `min_quote_volume_usd_24h` | Próg na `quoteVolume` z tickera (u Kraken: wolumen w USD / walucie kwotowania) |
 | `blacklist` | Lista symboli CCXT do wykluczenia |
-| `benchmark_symbol` | Musi być zgodny z konwencją CCXT, np. `BTC/USDT:USDT` |
+| `benchmark_symbol` | Musi pasować do `quote_asset`, np. `BTC/USD:USD` |
 
 ### `data`
 
@@ -116,7 +117,7 @@ Jeśli dodajesz nowe pole w YAML:
 
 ## Checklist przed pierwszym live
 
-- [ ] `.env` z kluczami tylko na środowisko testowe / ograniczone uprawnienia API (np. brak wypłat).
+- [ ] `.env` z `KRAKEN_API_KEY` / `KRAKEN_API_SECRET` (lub aliasy `KRAKEN_FUTURES_*`) — tylko środowisko testowe / ograniczone uprawnienia API.
 - [ ] `execution.paper: true` dopóki nie masz warstwy live orderów.
 - [ ] `universe.blacklist` — tokeny wykluczone z polityki funduszu.
 - [ ] `risk.daily_portfolio_loss_limit_pct` i `cooldown_hours_after_breach` zgodne z mandatem.

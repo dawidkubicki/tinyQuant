@@ -8,17 +8,19 @@ runtime:
   retry_backoff_seconds: 2.0
 
 exchange:
-  id: "binance"
+  # CCXT Kraken Futures (perpetuals). Spot `kraken` is not used.
+  id: "krakenfutures"
   default_type: "swap"
   sandbox: false
   enable_rate_limit: true
 
 universe:
   top_n: 50
-  quote_asset: "USDT"
+  # CCXT uses USD quote/settle for linear perps; fund margin with USDC on Kraken (no USDT in this stack).
+  quote_asset: "USD"
   min_quote_volume_usd_24h: 5_000_000
   blacklist: []
-  benchmark_symbol: "BTC/USDT:USDT"
+  benchmark_symbol: "BTC/USD:USD"
 
 data:
   ohlcv_timeframe: "4h"

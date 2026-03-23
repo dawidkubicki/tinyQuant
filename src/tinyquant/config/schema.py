@@ -7,7 +7,6 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-
 class RuntimeConfig(BaseModel):
     timezone: str = "UTC"
     cycle_interval: Literal["4h", "1h", "1d"] = "4h"
@@ -16,18 +15,53 @@ class RuntimeConfig(BaseModel):
 
 
 class ExchangeConfig(BaseModel):
-    id: str = "binance"
+    id: Literal["krakenfutures"] = "krakenfutures"
     default_type: Literal["swap", "future"] = "swap"
     sandbox: bool = False
     enable_rate_limit: bool = True
 
 
 class UniverseConfig(BaseModel):
+    """Kraken Futures linear perpetuals use CCXT symbols like ``BASE/USD:USD`` (USD-margined).
+
+    Fund the account with **USDC** (or other allowed collateral) on Kraken; USDT is not used by this project.
+    """
+
     top_n: int = Field(ge=5, le=200, default=50)
-    quote_asset: str = "USDT"
+    quote_asset: str = "USD"
     min_quote_volume_usd_24h: float = Field(ge=0, default=0.0)
     blacklist: list[str] = Field(default_factory=list)
-    benchmark_symbol: str = "BTC/USDT:USDT"
+    benchmark_symbol: str = "BTC/USD:USD"
+
+    @field_validator("quote_asset")
+    @classmethod
+    def quote_asset_upper_no_usdt(cls, v: str) -> str:
+        u = v.strip().upper()
+        if u == "USDT":
+            raise ValueError(
+                "quote_asset USDT is not supported; use USD (Kraken Futures CCXT convention). "
+                "Deposit/margin on Kraken with USDC in the UI."
+            )
+        if not u.isalnum() or len(u) < 2:
+            raise ValueError("quote_asset must be a short alphanumeric code (e.g. USD).")
+        return u
+
+    @model_validator(mode="after")
+    def benchmark_matches_quote(self) -> UniverseConfig:
+        sym = self.benchmark_symbol.strip()
+        if "/" not in sym or ":" not in sym:
+            raise ValueError(
+                "benchmark_symbol must be CCXT swap form BASE/QUOTE:SETTLE, e.g. BTC/USD:USD"
+            )
+        base_rest, settle_part = sym.split("/", 1)
+        if ":" not in settle_part or not base_rest:
+            raise ValueError("benchmark_symbol must be CCXT swap form BASE/QUOTE:SETTLE")
+        quote, settle = settle_part.split(":", 1)
+        if quote.upper() != self.quote_asset or settle.upper() != self.quote_asset:
+            raise ValueError(
+                f"benchmark_symbol quote/settle must match quote_asset={self.quote_asset!r}, got {sym!r}"
+            )
+        return self
 
 
 class DataConfig(BaseModel):

@@ -18,7 +18,13 @@ logger = logging.getLogger(__name__)
 class CCXTDataClient:
     def __init__(self, cfg: ExchangeConfig, api_key: str | None = None, secret: str | None = None):
         self.cfg = cfg
-        klass = getattr(ccxt, cfg.id)
+        try:
+            klass = getattr(ccxt, cfg.id)
+        except AttributeError as e:
+            raise ValueError(
+                f"Unknown CCXT exchange id {cfg.id!r}. tinyQuant is configured for Kraken Futures only "
+                "(use exchange id 'krakenfutures')."
+            ) from e
         opts: dict[str, Any] = {
             "enableRateLimit": cfg.enable_rate_limit,
             "options": {"defaultType": cfg.default_type},

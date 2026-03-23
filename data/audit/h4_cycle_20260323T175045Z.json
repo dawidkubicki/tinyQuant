@@ -1,0 +1,347 @@
+{
+  "ts": "20260323T175045Z",
+  "symbols": [
+    "BTC/USD:USD",
+    "ALT1/USD:USD",
+    "ALT2/USD:USD",
+    "ALT3/USD:USD",
+    "ALT4/USD:USD",
+    "ALT5/USD:USD",
+    "ALT6/USD:USD",
+    "ALT7/USD:USD",
+    "ALT8/USD:USD",
+    "ALT9/USD:USD",
+    "ALT10/USD:USD",
+    "ALT11/USD:USD",
+    "ALT12/USD:USD",
+    "ALT13/USD:USD",
+    "ALT14/USD:USD",
+    "ALT15/USD:USD"
+  ],
+  "tradable": [
+    "ALT1/USD:USD",
+    "ALT2/USD:USD",
+    "ALT3/USD:USD",
+    "ALT4/USD:USD",
+    "ALT5/USD:USD",
+    "ALT6/USD:USD",
+    "ALT7/USD:USD",
+    "ALT8/USD:USD",
+    "ALT9/USD:USD",
+    "ALT10/USD:USD",
+    "ALT11/USD:USD",
+    "ALT12/USD:USD",
+    "ALT13/USD:USD",
+    "ALT14/USD:USD",
+    "ALT15/USD:USD"
+  ],
+  "regime_id": 0,
+  "regime_confidence": 0.3333333333333333,
+  "regime_proba": [
+    0.3333333333333333,
+    0.3333333333333333,
+    0.3333333333333333
+  ],
+  "betas": {
+    "BTC/USD:USD": 1.0,
+    "ALT1/USD:USD": -0.020173705748688157,
+    "ALT2/USD:USD": -0.017691224010632445,
+    "ALT3/USD:USD": 0.12676349927595432,
+    "ALT4/USD:USD": 0.1172251715494232,
+    "ALT5/USD:USD": -0.006652298547001168,
+    "ALT6/USD:USD": -0.12274287068925194,
+    "ALT7/USD:USD": 0.05487929246476316,
+    "ALT8/USD:USD": 0.11748779835014543,
+    "ALT9/USD:USD": 0.03349954649542167,
+    "ALT10/USD:USD": -0.06378688491049657,
+    "ALT11/USD:USD": -0.027717269267634733,
+    "ALT12/USD:USD": 0.006171084161225716,
+    "ALT13/USD:USD": 0.026908415647500537,
+    "ALT14/USD:USD": 0.08292428718234678,
+    "ALT15/USD:USD": -0.01727669830714029
+  },
+  "diffusion_scores": {
+    "ALT1/USD:USD": 0.0,
+    "ALT2/USD:USD": 0.0,
+    "ALT3/USD:USD": 0.0,
+    "ALT4/USD:USD": 0.0,
+    "ALT5/USD:USD": 0.0,
+    "ALT6/USD:USD": 0.0,
+    "ALT7/USD:USD": 0.0,
+    "ALT8/USD:USD": 0.0,
+    "ALT9/USD:USD": 0.0,
+    "ALT10/USD:USD": 0.0,
+    "ALT11/USD:USD": 0.0,
+    "ALT12/USD:USD": 0.0,
+    "ALT13/USD:USD": 0.0,
+    "ALT14/USD:USD": 0.0,
+    "ALT15/USD:USD": 0.0
+  },
+  "gat_scores": {
+    "ALT1/USD:USD": 0.0,
+    "ALT2/USD:USD": 0.0,
+    "ALT3/USD:USD": 0.0,
+    "ALT4/USD:USD": 0.0,
+    "ALT5/USD:USD": 0.0,
+    "ALT6/USD:USD": 0.0,
+    "ALT7/USD:USD": 0.0,
+    "ALT8/USD:USD": 0.0,
+    "ALT9/USD:USD": 0.0,
+    "ALT10/USD:USD": 0.0,
+    "ALT11/USD:USD": 0.0,
+    "ALT12/USD:USD": 0.0,
+    "ALT13/USD:USD": 0.0,
+    "ALT14/USD:USD": 0.0,
+    "ALT15/USD:USD": 0.0
+  },
+  "targets": {
+    "ALT1/USD:USD": {
+      "side": "long",
+      "target_notional_usd": 983.0851060362395,
+      "weight_in_leg": 0.1966170212072479,
+      "score": 0.0
+    },
+    "ALT2/USD:USD": {
+      "side": "long",
+      "target_notional_usd": 1049.8090847426486,
+      "weight_in_leg": 0.2099618169485297,
+      "score": 0.0
+    },
+    "ALT3/USD:USD": {
+      "side": "long",
+      "target_notional_usd": 1040.2542447426515,
+      "weight_in_leg": 0.2080508489485303,
+      "score": 0.0
+    },
+    "ALT4/USD:USD": {
+      "side": "long",
+      "target_notional_usd": 886.2734526840917,
+      "weight_in_leg": 0.17725469053681833,
+      "score": 0.0
+    },
+    "ALT5/USD:USD": {
+      "side": "long",
+      "target_notional_usd": 1040.5781117943689,
+      "weight_in_leg": 0.20811562235887376,
+      "score": 0.0
+    },
+    "ALT15/USD:USD": {
+      "side": "short",
+      "target_notional_usd": 1072.1630073486917,
+      "weight_in_leg": 0.21443260146973836,
+      "score": 0.0
+    },
+    "ALT14/USD:USD": {
+      "side": "short",
+      "target_notional_usd": 1016.1526742901152,
+      "weight_in_leg": 0.20323053485802303,
+      "score": 0.0
+    },
+    "ALT13/USD:USD": {
+      "side": "short",
+      "target_notional_usd": 942.6548607994275,
+      "weight_in_leg": 0.1885309721598855,
+      "score": 0.0
+    },
+    "ALT12/USD:USD": {
+      "side": "short",
+      "target_notional_usd": 959.5837198785892,
+      "weight_in_leg": 0.19191674397571784,
+      "score": 0.0
+    },
+    "ALT11/USD:USD": {
+      "side": "short",
+      "target_notional_usd": 1009.445737683176,
+      "weight_in_leg": 0.2018891475366352,
+      "score": 0.0
+    }
+  },
+  "deltas": [
+    {
+      "symbol": "ALT14/USD:USD",
+      "side": "rebalance",
+      "delta_usd": -1016.1526742901152,
+      "target_side": "short"
+    },
+    {
+      "symbol": "ALT5/USD:USD",
+      "side": "rebalance",
+      "delta_usd": 1040.5781117943689,
+      "target_side": "long"
+    },
+    {
+      "symbol": "ALT11/USD:USD",
+      "side": "rebalance",
+      "delta_usd": -1009.445737683176,
+      "target_side": "short"
+    },
+    {
+      "symbol": "ALT2/USD:USD",
+      "side": "rebalance",
+      "delta_usd": 1049.8090847426486,
+      "target_side": "long"
+    },
+    {
+      "symbol": "ALT3/USD:USD",
+      "side": "rebalance",
+      "delta_usd": 1040.2542447426515,
+      "target_side": "long"
+    },
+    {
+      "symbol": "ALT12/USD:USD",
+      "side": "rebalance",
+      "delta_usd": -959.5837198785892,
+      "target_side": "short"
+    },
+    {
+      "symbol": "ALT13/USD:USD",
+      "side": "rebalance",
+      "delta_usd": -942.6548607994275,
+      "target_side": "short"
+    },
+    {
+      "symbol": "ALT15/USD:USD",
+      "side": "rebalance",
+      "delta_usd": -1072.1630073486917,
+      "target_side": "short"
+    },
+    {
+      "symbol": "ALT1/USD:USD",
+      "side": "rebalance",
+      "delta_usd": 983.0851060362395,
+      "target_side": "long"
+    },
+    {
+      "symbol": "ALT4/USD:USD",
+      "side": "rebalance",
+      "delta_usd": 886.2734526840917,
+      "target_side": "long"
+    }
+  ],
+  "fills": [
+    {
+      "id": "907fc5cf-2428-46f5-b9f9-02d5d5839a23",
+      "symbol": "ALT14/USD:USD",
+      "delta_usd": -1016.1526742901152,
+      "position_before": 0.0,
+      "position_after": -1016.1526742901152,
+      "fee_usd": 0.5080763371450576,
+      "paper": true,
+      "ts": 1774288245.259457
+    },
+    {
+      "id": "9c693a68-aad4-442b-a76d-c4d045108854",
+      "symbol": "ALT5/USD:USD",
+      "delta_usd": 1040.5781117943689,
+      "position_before": 0.0,
+      "position_after": 1040.5781117943689,
+      "fee_usd": 0.5202890558971844,
+      "paper": true,
+      "ts": 1774288245.2597172
+    },
+    {
+      "id": "db814f26-d777-45e5-af13-a401b6e0f7f3",
+      "symbol": "ALT11/USD:USD",
+      "delta_usd": -1009.445737683176,
+      "position_before": 0.0,
+      "position_after": -1009.445737683176,
+      "fee_usd": 0.504722868841588,
+      "paper": true,
+      "ts": 1774288245.259947
+    },
+    {
+      "id": "ba2c9878-4d99-4d42-b6fc-8263f5f034a9",
+      "symbol": "ALT2/USD:USD",
+      "delta_usd": 1049.8090847426486,
+      "position_before": 0.0,
+      "position_after": 1049.8090847426486,
+      "fee_usd": 0.5249045423713243,
+      "paper": true,
+      "ts": 1774288245.260155
+    },
+    {
+      "id": "e92a916d-d64e-4066-bcbc-167a4b5b72f2",
+      "symbol": "ALT3/USD:USD",
+      "delta_usd": 1040.2542447426515,
+      "position_before": 0.0,
+      "position_after": 1040.2542447426515,
+      "fee_usd": 0.5201271223713257,
+      "paper": true,
+      "ts": 1774288245.260374
+    },
+    {
+      "id": "c5eb4f0f-039c-4bd7-adab-10bad3f570a7",
+      "symbol": "ALT12/USD:USD",
+      "delta_usd": -959.5837198785892,
+      "position_before": 0.0,
+      "position_after": -959.5837198785892,
+      "fee_usd": 0.47979185993929463,
+      "paper": true,
+      "ts": 1774288245.260776
+    },
+    {
+      "id": "d8087e62-fdd6-4b8a-819c-7b1faeae5af2",
+      "symbol": "ALT13/USD:USD",
+      "delta_usd": -942.6548607994275,
+      "position_before": 0.0,
+      "position_after": -942.6548607994275,
+      "fee_usd": 0.47132743039971375,
+      "paper": true,
+      "ts": 1774288245.260996
+    },
+    {
+      "id": "cdc6228c-9cd9-4cfe-913a-c2e6bce9e0f6",
+      "symbol": "ALT15/USD:USD",
+      "delta_usd": -1072.1630073486917,
+      "position_before": 0.0,
+      "position_after": -1072.1630073486917,
+      "fee_usd": 0.5360815036743459,
+      "paper": true,
+      "ts": 1774288245.261291
+    },
+    {
+      "id": "71de89e4-5a86-47b0-92af-db0ff6e90c30",
+      "symbol": "ALT1/USD:USD",
+      "delta_usd": 983.0851060362395,
+      "position_before": 0.0,
+      "position_after": 983.0851060362395,
+      "fee_usd": 0.4915425530181198,
+      "paper": true,
+      "ts": 1774288245.2615008
+    },
+    {
+      "id": "e891e1fb-4aed-4542-8943-59670d9fac2f",
+      "symbol": "ALT4/USD:USD",
+      "delta_usd": 886.2734526840917,
+      "position_before": 0.0,
+      "position_after": 886.2734526840917,
+      "fee_usd": 0.4431367263420459,
+      "paper": true,
+      "ts": 1774288245.261693
+    }
+  ],
+  "risk_daily_breach": false,
+  "synthetic": true,
+  "sentiment": {
+    "per_tradable": {
+      "ALT1/USD:USD": 0.0,
+      "ALT2/USD:USD": 0.0,
+      "ALT3/USD:USD": 0.0,
+      "ALT4/USD:USD": 0.0,
+      "ALT5/USD:USD": 0.0,
+      "ALT6/USD:USD": 0.0,
+      "ALT7/USD:USD": 0.0,
+      "ALT8/USD:USD": 0.0,
+      "ALT9/USD:USD": 0.0,
+      "ALT10/USD:USD": 0.0,
+      "ALT11/USD:USD": 0.0,
+      "ALT12/USD:USD": 0.0,
+      "ALT13/USD:USD": 0.0,
+      "ALT14/USD:USD": 0.0,
+      "ALT15/USD:USD": 0.0
+    },
+    "debug": {
+      "mode": "disabled"
+    }
+  }
+}

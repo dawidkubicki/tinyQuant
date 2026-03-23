@@ -28,11 +28,22 @@ def _setup_logging(level: str) -> None:
     )
 
 
+def _kraken_api_credentials(
+    args_key: str | None,
+    args_secret: str | None,
+) -> tuple[str | None, str | None]:
+    """Read Kraken Futures API key/secret from CLI args or env (CCXT ``apiKey`` / ``secret``)."""
+    key = args_key or os.environ.get("KRAKEN_API_KEY") or os.environ.get("KRAKEN_FUTURES_API_KEY")
+    secret = args_secret or os.environ.get("KRAKEN_API_SECRET") or os.environ.get(
+        "KRAKEN_FUTURES_API_SECRET"
+    )
+    return key, secret
+
+
 def cmd_run_once(args: argparse.Namespace) -> int:
     cfg = load_strategy_config(args.config)
     _setup_logging(cfg.observability.log_level)
-    api_key = args.api_key or os.environ.get("BINANCE_API_KEY")
-    secret = args.secret or os.environ.get("BINANCE_API_SECRET")
+    api_key, secret = _kraken_api_credentials(args.api_key, args.secret)
     run_h4_cycle(
         cfg,
         equity_usd=args.equity,
@@ -53,8 +64,7 @@ def cmd_run_loop(args: argparse.Namespace) -> int:
             cfg.data.ohlcv_timeframe,
         )
         return 2
-    api_key = args.api_key or os.environ.get("BINANCE_API_KEY")
-    secret = args.secret or os.environ.get("BINANCE_API_SECRET")
+    api_key, secret = _kraken_api_credentials(args.api_key, args.secret)
     margin = float(args.post_boundary_seconds)
     max_err = int(args.max_consecutive_errors)
     n_fail = 0
@@ -103,8 +113,7 @@ def cmd_train_regime(args: argparse.Namespace) -> int:
 def cmd_train_regime_history(args: argparse.Namespace) -> int:
     cfg = load_strategy_config(args.config)
     _setup_logging(cfg.observability.log_level)
-    api_key = args.api_key or os.environ.get("BINANCE_API_KEY")
-    secret = args.secret or os.environ.get("BINANCE_API_SECRET")
+    api_key, secret = _kraken_api_credentials(args.api_key, args.secret)
     lookback = args.lookback if args.lookback is not None else cfg.data.ohlcv_lookback_bars
     fit_regime_models_from_exchange(
         cfg,

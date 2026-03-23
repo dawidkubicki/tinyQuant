@@ -26,7 +26,7 @@ def effective_sentiment(score: float, hours: float, decay_base: float) -> float:
 
 
 def symbol_base_ticker(symbol: str) -> str:
-    """CCXT perpetual like SOL/USDT:USDT -> SOL."""
+    """CCXT perpetual like SOL/USD:USD -> SOL."""
     base = symbol.split("/")[0].strip()
     return base.upper()
 

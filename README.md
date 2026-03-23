@@ -1,6 +1,6 @@
 # tinyQuant
 
-Modular **H4 market-neutral** engine for **crypto perpetual futures**: data ingestion (CCXT), beta-neutral residuals, graph diffusion mispricing, TDA landscape features, GMM/XGBoost regime detection, regime-dependent scoring (RD-GAT checkpoint or deterministic fallback), volatility-parity long/short book, paper execution, and portfolio-level risk cooldown.
+Modular **H4 market-neutral** engine for **crypto perpetual futures** on **Kraken Futures** (CCXT `krakenfutures`, USD-margined linear perps in symbols; fund margin with **USDC** on Kraken — no USDT in config): data ingestion (CCXT), beta-neutral residuals, graph diffusion mispricing, TDA landscape features, GMM/XGBoost regime detection, regime-dependent scoring (RD-GAT checkpoint or deterministic fallback), volatility-parity long/short book, paper execution, and portfolio-level risk cooldown.
 
 **Pełna dokumentacja (PL):** zobacz katalog [`docs/`](docs/README.md) — architektura, szkolenie modeli, uruchomienie, konfiguracja YAML.
 
@@ -24,9 +24,9 @@ pytest -q
 # Paper / synthetic single cycle (no exchange I/O)
 tinyquant-h4 --config config/strategy.market_neutral.h4.yaml run-once --synthetic
 
-# Live cycle (requires API keys + network)
-export BINANCE_API_KEY=...
-export BINANCE_API_SECRET=...
+# Live cycle (requires Kraken Futures API keys + network)
+export KRAKEN_API_KEY=...
+export KRAKEN_API_SECRET=...
 tinyquant-h4 --config config/strategy.market_neutral.h4.yaml run-once
 
 # Bootstrap regime models (synthetic features — replace with your historical pipeline)

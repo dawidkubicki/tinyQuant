@@ -27,8 +27,10 @@ pip install -e .
 
 | Zmienna | Znaczenie |
 |---------|-----------|
-| `BINANCE_API_KEY` | Klucz API (przykład dla Binance) |
-| `BINANCE_API_SECRET` | Sekret |
+| `KRAKEN_API_KEY` | Klucz API Kraken Futures (CCXT `apiKey`) |
+| `KRAKEN_API_SECRET` | Sekret (CCXT `secret`) |
+| `KRAKEN_FUTURES_API_KEY` | Opcjonalny alias dla `KRAKEN_API_KEY` |
+| `KRAKEN_FUTURES_API_SECRET` | Opcjonalny alias dla `KRAKEN_API_SECRET` |
 | `TINYQUANT_STRATEGY_YAML` | Opcjonalnie: pełna ścieżka do YAML strategii |
 | `LOG_LEVEL` | np. `INFO`, `DEBUG` |
 
@@ -114,4 +116,5 @@ Helper: `src/tinyquant/orchestration/scheduler.py` — `seconds_until_next_bar_c
 |---------|-----------|
 | `Strategy YAML not found` | Uruchom z **katalogu głównym repo** lub ustaw `TINYQUANT_STRATEGY_YAML` / `--config` na absolutną ścieżkę. |
 | XGBoost nie ładuje się na macOS | `brew install libomp` (patrz README i [Szkolenie](szkolenie-i-artyfakty.md)). |
-| Brak `fetchFundingRateHistory` na giełdzie | Funding w sygnale będzie zerowy; rozważ zmianę `exchange.id` w YAML. |
+| Brak `fetchFundingRateHistory` na giełdzie | Funding w sygnale będzie zerowy (sprawdź wersję CCXT / uprawnienia API). |
+| Zmiana giełdy lub uniwersum (np. z Binance USDT na Kraken USD) | **Ponowny trening** modeli reżimu / RD-GAT na nowym panelu instrumentów (`train-regime-history`, potem artefakty w `data/models/`). |

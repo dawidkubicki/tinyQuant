@@ -143,7 +143,7 @@ def test_aggregate_micro_and_macro(tmp_path: Path) -> None:
     conn.commit()
     conn.close()
 
-    symbols = ["ALT1/USDT:USDT", "ALT2/USDT:USDT"]
+    symbols = ["ALT1/USD:USD", "ALT2/USD:USD"]
     per_map, macro, _dbg = aggregate_news_for_universe(
         store,
         symbols,

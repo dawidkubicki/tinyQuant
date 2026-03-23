@@ -12,12 +12,12 @@ def test_regime_feature_row_from_panel_synthetic_shape(strategy_config) -> None:
     rets = rng.normal(0, 0.012, size=(t, n))
     close = 100.0 * np.cumprod(1.0 + rets, axis=0)
     vol = rng.uniform(100.0, 10_000.0, size=(t, n))
-    symbols = ["BTC/USDT:USDT"] + [f"ALT{i}/USDT:USDT" for i in range(1, n)]
+    symbols = ["BTC/USD:USD"] + [f"ALT{i}/USD:USD" for i in range(1, n)]
     row = regime_feature_row_from_panel(
         close,
         vol_full=vol,
         symbols=symbols,
-        bench_sym="BTC/USDT:USDT",
+        bench_sym="BTC/USD:USD",
         cfg=strategy_config,
     )
     d = strategy_config.tda.landscape_resolution + 3
@@ -31,12 +31,12 @@ def test_build_regime_feature_matrix_history_non_empty(strategy_config) -> None:
     rets = rng.normal(0, 0.01, size=(t, n))
     close = 100.0 * np.cumprod(1.0 + rets, axis=0)
     vol = rng.uniform(500.0, 5_000.0, size=(t, n))
-    symbols = ["BTC/USDT:USDT"] + [f"ALT{i}/USDT:USDT" for i in range(1, n)]
+    symbols = ["BTC/USD:USD"] + [f"ALT{i}/USD:USD" for i in range(1, n)]
     X = build_regime_feature_matrix_history(
         close,
         vol,
         symbols,
-        "BTC/USDT:USDT",
+        "BTC/USD:USD",
         strategy_config,
         step=20,
         max_samples=50,
